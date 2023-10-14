@@ -11,6 +11,7 @@ from cachetools import Cache, LRUCache
 url_cache = LRUCache(maxsize=1000)
 
 def generate_qr_code_image(url):
+    global img
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -35,12 +36,13 @@ def update_qr_code():
         qr_code_label.config(image=None)
 
 def save_qr_code():
+    global img
     url = url_entry.get()
     if validators.url(url):
         qr_code_image = generate_qr_code_image(url)
         file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
         if file_path:
-            qr_code_image.image().save(file_path)
+            img.save(file_path)
 
 def shorten_url_cache(long_url):
     # Check if the shortened URL is in the cache
