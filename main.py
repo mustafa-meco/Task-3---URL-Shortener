@@ -10,6 +10,14 @@ from cachetools import Cache, LRUCache
 # Create an in-memory cache with a maximum size
 url_cache = LRUCache(maxsize=1000)
 
+def unpack_widgets():
+    result_label.pack_forget()
+    result_entry.pack_forget()
+    copy_button.pack_forget()
+    generate_qr_button.pack_forget()
+    qr_code_label.pack_forget()
+    save_qr_button.pack_forget()
+
 def generate_qr_code_image(url):
     global img
     qr = qrcode.QRCode(
@@ -25,7 +33,7 @@ def generate_qr_code_image(url):
     return ImageTk.PhotoImage(img)
 
 def update_qr_code():
-    url = url_entry.get()
+    url = result_entry.get()
     if validators.url(url):
         qr_code_image = generate_qr_code_image(url)
         qr_code_label.config(image=qr_code_image)
@@ -59,8 +67,10 @@ def shorten_url_cache(long_url):
 
 
 def shorten_url(event=None):
+    unpack_widgets()
     long_url = url_entry.get()
-    
+    result_label.pack()
+    result_entry.pack()
     
     if validators.url(long_url):
         short_url = shorten_url_cache(long_url)
@@ -68,13 +78,16 @@ def shorten_url(event=None):
         result_entry.delete(0, tk.END)
         result_entry.insert(0, short_url)
         result_entry.config(state="readonly")
-        result_label.pack()
-        result_entry.pack()
+        
         copy_button.pack(pady=10)
         generate_qr_button.pack(pady=10)
     else:
+        result_entry.config(state="normal")
         result_entry.delete(0, tk.END)
         result_entry.insert(0, "Invalid URL")
+        result_entry.config(state="readonly")
+
+    
 
 def copy_to_clipboard():
     short_url = result_entry.get()
